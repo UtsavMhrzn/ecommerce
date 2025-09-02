@@ -1,30 +1,46 @@
-import { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { createContext, useContext, useState, useEffect } from "react";
 
-const ProtectedRouteUser = () => {
-  const { isAuthenticated, isLoading } = useAuth();
-  const navigate = useNavigate();
+const AuthContext = createContext();
 
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate token check on mount
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      navigate("/login", { replace: true });
+    const token = localStorage.getItem("token");
+    if (token) {
+      // Replace this with your backend call to fetch user
+      setUser({ name: "Admin" });
+      setIsAuthenticated(true);
     }
-  }, [isLoading, isAuthenticated, navigate]);
+    setIsLoading(false);
+  }, []);
 
-  if (isLoading) {
-    console.log("user route vitra")
+  const login = (userData, token) => {
+    localStorage.setItem("token", token);
+    setUser(userData);
+    setIsAuthenticated(true);
+  };
 
-    return (
-      <div className="flex items-center justify-center min-h-screen ">
-        <span className="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#2563eb]"></span>
-      </div>
-    );
-  }
+  const logout = () => {
+    try {
+      localStorage.removeItem("token");
+      setUser(null);
+      setIsAuthenticated(false);
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
 
-  if (!isAuthenticated) return null;
-
-  return <Outlet />;
+  return (
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, isLoading, login, logout }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-export default ProtectedRouteUser;
+export const useAuth = () => useContext(AuthContext);

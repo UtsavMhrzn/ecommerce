@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 import './App.css'
 import Router from '../../Routes'
+import { ToastContainer } from 'react-toastify'
+import { AuthProvider } from './component/Context/AuthContect'
 
 
 function App() {
@@ -10,8 +12,14 @@ function App() {
   return (
     
       <div>
-        <Router/>
-      
+          <AuthProvider>     
+          <Router/>
+          </AuthProvider>
+        <ToastContainer
+        position="top-right"
+        pauseOnHover
+        autoClose={3000}
+        />
       </div>
 
   )

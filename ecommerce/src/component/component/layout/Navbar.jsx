@@ -3,13 +3,15 @@ import Vector from "../../../assets/icons/Vector.svg";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useFirst } from "../../Context/FIrstContext";
+import Service from "./Service";
 
 const Navbar = () => {
+  
   const links = [
     { name: "Home", path: "/home" },
     { name: "Contact", path: "/contact" },
     { name: "About", path: "/about" },
-    { name: "Sign Up", path: "/signup" },
+    // { name: "Sign Up", path: "/signup" },
   ];
 
   const navigate = useNavigate();
@@ -46,8 +48,12 @@ const Navbar = () => {
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => setDropdownOpen(false), 300); // Delay for interaction
   };
+  const handleLogout = async() => {
+    await logout()
+  }
 
   return (
+    <>
     <div className="overflow-x-hidden overflow-y-hidden">
       {/* Top Banner */}
       <div className="relative w-full text-white bg-black h-[48px] flex items-center justify-center">
@@ -183,18 +189,23 @@ const Navbar = () => {
                   onClick={() => {
                     if (label === "Logout") {
                       if (logout) logout();
+                      
                       localStorage.removeItem("authenticated");
                       navigate("/login");
                       console.log("Logged out");
+                      handleLogout();
 
                     } 
-                   
+                    else if(label === "Manage My Account"){
+                      navigate("/profile");
+                    }
                     setDropdownOpen(false);
                   }}
                   className="flex items-center gap-2 hover:text-[#DB4444] text-left"
                 >
                   <span className="material-icons"></span> {label}
                 </button>
+                
               ))}
             </div>
           </div>
@@ -204,6 +215,7 @@ const Navbar = () => {
       {/* Outlet for nested routes */}
       <Outlet />
     </div>
+   </>
   );
 };
 

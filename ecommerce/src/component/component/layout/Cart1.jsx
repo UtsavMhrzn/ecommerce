@@ -1,7 +1,20 @@
 
+import { useState } from "react"
+import { useFirst } from "../../Context/FIrstContext";
 import SwiperComp1 from "./SwiperComp";
+import UpdateUser from "./UpdateUser";
+import { useNavigate } from "react-router-dom";
+
+
+
+
 
 const FlashSale = () => {
+  const { alluser, deleteUser } = useFirst()
+  const [showDelete, setShowDelete] = useState(false)
+  const [showUpdate, setShowUpdate] = useState(false)
+  const [updateData, setUpdateData] = useState()
+  const navigate = useNavigate()
   const productData = [
     {
       name: "HAVIT HV-G92 Gamepad",
@@ -76,7 +89,7 @@ const FlashSale = () => {
       image: "/Assets/Console4.svg",
     },
   ];
-
+  if (!alluser) return null
   return (
     <div className="w-full max-w-[1470px] mx-auto px-4 md:px-10  flex flex-col gap-6 mt-[116px]">
       {/* Heading */}
@@ -122,6 +135,83 @@ const FlashSale = () => {
       <div className="w-full ">
         <SwiperComp1 data={productData} />
       </div>
+      <div className="w-full flex justify-center mt-12 ">
+        <button className="bg-[#DB4444] text-white px-7 py-3 cursor-pointer rounded-md">
+          View All Categories
+        </button>
+
+      </div>
+      <div>
+        <span>All users data</span>
+        <section>
+          {
+            alluser && alluser.map((data, index) => (
+              <>
+                <div className="flex  gap-3 items-center">
+                  <span>{index}</span>
+                  <div className="flex flex-row w-fit-content gap-3 items-center text-center">
+                    <div className="flex flex-col w-[90px] gap-1">
+                      <span className="font-bold text-lg">{data.email}</span>
+                      <span className="w-fit h-fit text-center">{data.username}</span>
+                    </div>
+                    <button className="text-white ml-40 bg-red-400 rounded-lg px-5 py-3 cursor-pointer"
+                      onClick={() => {
+                        setShowDelete(true)
+                      }}>
+                      Delete
+                    </button>
+
+                    <button className="" onClick={() => {
+                      setUpdateData(data)
+                      setShowUpdate(true)
+
+                    }}>Update</button>
+
+                    <button onClick={() => {
+                      navigate(`/user/${data._id}`)
+                    }}>Show page</button>
+                  </div>
+
+
+                  {
+                    showDelete == true &&
+                    (
+                      <div className="fixed inset-0 z-[9999] bg-transparent w-full h-full">
+                        <div className="absolute left-[30%] top-[30%] flex flex-col bg-black text-white gap-5 w-[45%] p-6">
+                          <span>are you sure you want to delete the data of user {data.email}?</span>
+                          <div className="flex justify-between w-full">
+                            <button className="text-white p-2 shadow-md bg-red-300"
+                              onClick={() => {
+                                deleteUser(data._id)
+                                setShowDelete(false)
+                              }
+
+                              }>
+                              Delete
+                            </button>
+                            <button
+                              onClick={() => setShowDelete(false)}
+                              className="p-2 shadow-md bg-red-300">cancel</button>
+                          </div>
+                        </div>
+
+                      </div>
+                    )
+                  }
+                </div>
+
+              </>
+            ))
+          }
+        </section>
+      </div>
+
+
+      {
+        showUpdate &&
+        <UpdateUser data={updateData} hideFunction={() => setShowUpdate(false)} />
+      }
+
     </div>
   );
 };

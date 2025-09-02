@@ -1,12 +1,49 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useFirst } from "../../Context/FIrstContext";
 
 const Signup = () => {
+    const { signup, isAuthenticated } = useFirst()
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+    const [userData, setUserData] = useState({
+    username: "",
+    email: "",
+  
+    password: ""
+  })
+  const handleChange = (e) => {
+    const  name = e.target.name
+    const value = e.target.value
+    setUserData((prev) => ({ 
+      ...prev, [name]: value }))
+  }
+  
+  const handlesignup = async() => {
+    await signup(userData)
+  }
+  
+    useEffect(() => {
+      if (isAuthenticated == true) {
+        navigate("/")
+      }
+      else {
+        navigate("/signup")
+      }
+    }, [isAuthenticated])
+  
   const exchng = [
     
     { name: "Log in", path: "/login" }];
+    //  useEffect(() => {
+    //     if (isAuthenticated == true) {
+    //       navigate("/")
+    //     }
+    //     else {
+    //       navigate("/signup")
+    //     }
+    //   }, [isAuthenticated])
+
 
   return (
     <>
@@ -20,19 +57,32 @@ const Signup = () => {
               <input
                 type="text"
                 placeholder="Name"
+                name="username"
+                 onChange={(e) => handleChange(e)}
                 className="border-b-1 pb-2 outline-0 text-[#7D8184] drop-shadow-2xl shadow-black/40 text-[16px] p-2 border-gray-300"
               />
               <input
                 type="email"
                 placeholder="Email or Phone Number"
+                name="email"
+                 onChange={(e) => handleChange(e)}
                 className="border-b-1 pb-2 outline-0 text-[#7D8184] text-[16px] p-2 border-gray-300"
               />
+                 {/* <input
+                type="number"
+                placeholder="Phone Number"
+                name="phoneNumber"
+                 onChange={(e) => handleChange(e)}
+                className="border-b-1 pb-2 outline-0 text-[#7D8184] text-[16px] p-2 border-gray-300"
+              /> */}
 
               {/* ✅ Password with Show/Hide */}
               <div className="relative w-full max-w-md">
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
+                  name="password"
+                   onChange={(e) => handleChange(e)}
                   className="border-b pb-2 outline-0 text-[#7D8184] text-[16px] p-2 w-full border-gray-300"
                 />
                 <img
@@ -44,7 +94,7 @@ const Signup = () => {
               </div>
             </div>
 
-            <div className="h-[56px] text-center p-4.5 bg-[#DB4444] rounded-[6px] cursor-pointer mt-6">
+            <div className="h-[56px] text-center p-4.5 bg-[#DB4444] rounded-[6px] cursor-pointer mt-6 " onClick={handlesignup}>
               <span className="text-white text-[16px] font-semibold">Create Account</span>
             </div>
 

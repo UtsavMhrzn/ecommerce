@@ -6,13 +6,16 @@ import { BrowserRouter } from 'react-router-dom'
 import FirstContextProvider from './component/Context/FIrstContext.jsx'
 
 
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter> 
       <FirstContextProvider>
+        {/* <ProductContextProvider> */}
          <App/>
+        {/* </ProductContextProvider> */}
       </FirstContextProvider>
-    </BrowserRouter>
+    </BrowserRouter> 
     
   </StrictMode>,
 )
